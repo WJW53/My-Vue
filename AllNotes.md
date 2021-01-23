@@ -414,7 +414,7 @@ Vue.nextTick().then(() => {
   delete vm.deng.height; // 不是响应式的
   ```
 - 问：要如何响应式的更新数组和对象？
-  > 更改数组：<br> 1. 利用数组变异方法：push、pop、shift、unshift、splice、sort、reverse <br> 2. 利用vm.\$set/Vue.set实例方法<br>3. 利用vm.\$set或Vue.set删除数组中的某一项
+  > 更改数组：<br> 1. 利用数组变异方法：`push、pop、shift、unshift、splice、sort、reverse` <br> 2. 利用vm.\$set/Vue.set实例方法<br>3. 利用vm.\$set或Vue.set删除数组中的某一项
 
   > vm.\$set是Vue.set的别名<br>使用方法：Vue.set(object, propertyName, value)，也就是这个意思：Vue.set(要改谁，改它的什么，改成啥)
 
@@ -485,6 +485,9 @@ Vue.nextTick().then(() => {
 
 
 # 扩展_剖析Vue响应式原理
+
+监听数据变化，递归监听，页面渲染
+
 ```js
 const data = {
   name: 'shanshan',
@@ -561,14 +564,14 @@ function $delete(data, key) {
 observer(data);
 ```
 
-> 利用Object.defineProperty实现响应式的劣势
-1. 天生就需要进行递归
+> `利用Object.defineProperty实现响应式的劣势`
+1. **天生就需要进行递归**
 2. 监听不到`数组不存在的索引`的改变
-  - 但是vue中是直接不能监听到利用数组索引进行改变的,因为耗费的性能和用户体验不成正比!
-  - vue中先判断下data是不是数组,如果是,就不利用defineObject方法了
+  - 但是`vue中是直接不能监听到利用数组索引进行改变的,因为耗费的性能和用户体验不成正比!`
+  - `vue中先判断下data是不是数组,如果是,就不利用defineObject方法了`
   - 然后重新改写,做一些处理
-3. 监听不到数组长度的改变
-4. 监听不到对象的增删
+3. **监听不到数组长度的改变**
+4. **监听不到对象的增删**
 
 
 
