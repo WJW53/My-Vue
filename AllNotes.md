@@ -1,4 +1,3 @@
-[toc]
 # 课程准备
 - 所有代码及文件放到github上进行托管
 - 下载并安装vue-devtools插件
@@ -87,29 +86,31 @@
       {{ {name: '邓旭明', age: 80, height: '140cm', weight: '100kg'} }}
     </div>
   ```
+
 - 注意：在插值表达式中直接书写对象类型值时，不要将三个{}连在一起，这样会报错，如：
 
-```html
-    <div id="app">
-      <!-- 这样可是不行滴 -->
-    </div>
-```
+  ```html
+      <div id="app">
+        <!-- 这样可是不行滴 -->
+      </div>
+  ```
+
 - 还可在插值表达式中写表达式，如：
-``` html
-    <div id="app">
-      <!-- 运算表达式 -->
-      {{ 'you' + 'me' }}
-      {{ 10 - 5 }}
-      {{ 100 * 7 }}
-      {{ 1000 / 12 }}
-      <!-- 逻辑表达式 -->
-      {{ liu || li }}
-      {{ deng && liu }}
-      {{ !wang }}
-      <!-- 三元表达式 -->
-      {{ 1 + 1 === 3 ? '邓旭明' : '正常人' }}
-      <!-- 函数调用也是表达式，也可以使用,这个以后再学哈... -->
-    </div>
+  ``` html
+      <div id="app">
+        <!-- 运算表达式 -->
+        {{ 'you' + 'me' }}
+        {{ 10 - 5 }}
+        {{ 100 * 7 }}
+        {{ 1000 / 12 }}
+        <!-- 逻辑表达式 -->
+        {{ liu || li }}
+        {{ deng && liu }}
+        {{ !wang }}
+        <!-- 三元表达式 -->
+        {{ 1 + 1 === 3 ? '邓旭明' : '正常人' }}
+        <!-- 函数调用也是表达式，也可以使用,这个以后再学哈... -->
+      </div>
   ```
 
 - 还可以填写其他的吗？不可以，No，以下这些都是不行滴：
@@ -123,6 +124,7 @@
   ```
 
 - <font color=#ba55d3>记住</font>：插值表达式中，可以写：data、js数据、表达式，其他的想都不要想。
+
 
 - <font color=#ff4500>注意</font>，只要插值表达式中使用了数据，必须在data中声明过，否则会报错
   ``` html
@@ -164,7 +166,10 @@
     })
   ```
 
-# vue的响应式-1
+
+
+# Vue的响应式-1
+
 - 数据变化，页面就会重新渲染
 
 - 怎么更改数据？so easy
@@ -358,7 +363,8 @@ Vue.nextTick().then(() => {
 - 曾经vue用过的宏任务
   - MessageChannel 消息通道 宏任务,现在已经取消了
 
-# vue的响应式-2
+
+# Vue的响应式-2
 
 - 除了未被声明过和未被渲染的数据外，还有什么数据更改后不会渲染页面？
   > 1.&nbsp;利用索引直接设置一个数组项时：
@@ -5250,14 +5256,14 @@ vue create my-project
 
 
 拉取 2.x 模板 (旧版本)
-```js
+```shell
 npm install -g @vue/cli-init
-# `vue init` 的运行效果将会跟 `vue-cli@2.x` 相同
+`vue init` 的运行效果将会跟 `vue-cli@2.x` 相同
 vue init webpack my-project
-# vue脚手架搭建项目的可视化创建界面,运行以下命令
-# 但不推荐使用这种方式,还是最好用命令/代码手写,比较"程序员"
+vue脚手架搭建项目的可视化创建界面,运行以下命令
+但不推荐使用这种方式,还是最好用命令/代码手写,比较"程序员"
 vue ui
-#.vuerc文件中存在 presets(预设的代码)
+.vuerc文件中存在 presets(预设的代码)
 ```
 
 
@@ -6245,8 +6251,6 @@ components: {
 
 
 
-
-
 # VueRouter_基础
 
 ## 什么是路由？
@@ -6255,7 +6259,7 @@ components: {
 后来页面越来越复杂，服务器压力越来越大，随着ajax（异步刷新技术）的出现，页面的实现非重载就能刷新数据，让前端也可以控制url自行管理，前端路由由此而生。
 
 ## 什么时候使用前端路由？
-前端路由更多用在单页应用上，也就是SPA(Single Page Web Application)，在单页面应用中，大部分页面结果不变，只改变部分内容的使用。
+前端路由更多用在单页应用上，也就是`SPA(Single Page Web Application)`，在单页面应用中，url改变，大部分页面结果不变，只改变部分内容的使用。
 
 ## 安装路由
 > 安装：``npm install vue-router``。
@@ -6303,9 +6307,9 @@ const app = new Vue({
 ```
 
 ### html
-1. 使用 router-link 组件来导航. -->
+1. 使用 router-link 组件来导航.
 2. 通过传入 `to` 属性指定链接.
-3. <router-link> 默认会被渲染成一个 `<a>` 标签,设置tag可以改变为对应标签
+3. `<router-link> 默认会被渲染成一个 <a> 标签,设置tag可以改变为对应标签`
 4. 路由匹配到的组件将渲染在<router-view></router-view>
 
 ```html
@@ -6483,10 +6487,10 @@ const router = new VueRouter({
 
 
 # VueRouter_编程式的导航
-通过在 Vue 根实例的 router 配置传入 router 实例，\$router、 \$route 两个属性会被注入到每个子组件。
+通过在 Vue 根实例的 router 配置传入 router 实例，`\$router、 \$route 两个属性会被注入到每个子组件。`
 
 ## $router
-路由实例对象。
+`路由的实例对象。`
 
 除了使用  ``<router-link>`` 创建 a 标签来定义导航链接，我们还可以借助 router 的实例
 方法，通过编写代码来实现。
@@ -6521,7 +6525,7 @@ this.$router.push({ name: 'user' })
 
 ### $router.go(n)
 这个方法的参数是一个整数，意思是在 history 记录中向前或者后退多少步，类似 window.history.go(n)。
-
+`如果 history 记录不够用，那就默默地失败呗，什么也不说`
 ```js
 // 在浏览器记录中前进一步，等同于 history.forward()
 this.$router.go(1)
@@ -6538,13 +6542,13 @@ this.$router.go(100)
 ```
 
 ## $route
-`只读，当前路由信息对象。`
+**只读，`当前路由`信息对象。**
 
 ### $route.path
 字符串，对应当前路由的路径，总是解析为绝对路径，如 "/foo/bar"。
 
 ### $route.params
-一个 key/value 对象，包含了动态片段和全匹配片段，如果没有路由参数params，就是一个空对象。
+一个 key/value 对象，`包含了动态片段和全匹配片段`，如果没有路由参数params，就是一个空对象。
 
 ### $route.query
 一个 key/value 对象，表示 URL 查询参数。例如，对于路径 /foo?user=1，则有 \$route.query.user == 1，如果没有查询参数，则是个空对象。
@@ -6556,7 +6560,7 @@ this.$router.go(100)
 完成解析后的 URL，包含查询参数和 hash 的完整路径。
 
 ### $route.matched
-一个数组，包含当前路由的所有嵌套路径片段的路由记录 。`路由记录就是 routes 配置数组中的对象副本 (还有在 children 数组)`。
+一个数组，包含当前路由的所有`嵌套路径`片段的路由记录 。`路由记录就是 routes 配置数组中的对象副本 (还有在 children 数组)`。
 ```js
   const router = new VueRouter({
     routes: [
@@ -6581,12 +6585,54 @@ this.$router.go(100)
 ### $route.redirectedFrom
 如果存在重定向，即为重定向来源的路由的名字。
 
+## 配置同一个chunk
+`component: () => import(/* webpackChunkName:'academic' */"./views/Academic")`
 
+
+# Vue-router 报NavigationDuplicated的可能解决方案
+出现这个问题，控制台会报[NavigationDuplicated {_name: "NavigationDuplicated", name: "NavigationDuplicated"}]。其原因在于Vue-router在3.1之后把$router.push()方法改为了Promise。所以假如没有回调函数，错误信息就会交给全局的路由错误处理，因此就会报上述的错误。
+
+如果你仔细观察并复现了多次错误你会发现，vue-router是先报了一个Uncaught (in promise)的错误(因为push没加回调)，然后再点击路由的时候才会触发NavigationDuplicated的错误(路由出现的错误，全局错误处理打印了出来)。
+
+## 解决方案
+### 方案1
+固定vue-router版本到3.0.7以下。这个方案没什么说的，就是简单粗暴，没有任何理由。但是你能确保以后不升级vue-router吗？
+
+### 方案2
+禁止全局路由错误处理打印，这个也是vue-router开发者给出的解决方案：
+```js
+import Router from 'vue-router'
+
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
+```
+把这段代码放在引入vue-router之后就行，一般在main.js里，如果你的路由单独抽取出来了，那可能在其他的路由文件中。
+
+### 方案3(高成本高收益)
+vue-router的开发者也给出了解决方法，你需要为每个router.push增加回调函数。
+
+router.push('/location').catch(err => {err})
+对于我们来说这个解决方案的成本可能很高，但是是值得的。在vue-router 3.1版本之前的push调用时不会返回任何信息，假如push之后路由出现了问题也不会有任何的错误信息。如果你使用方案1固定了vue-router的版本，那么以后的项目需要路由的回调时你根本无从下手。
+
+### 方案4
+如果你使用了Element-UI，并且方案2无法解决你的问题。那么你只能用方案1来固定你的vue-router版本了。这是因为Element-UI的el-menu在重复点击路由的时候报的错误，而且这个错误是Element-UI内部的路由问题，你无法通过方案2和3去解决。只能选择暂时不升级Vue-router。
+
+好消息是Element-UI已经有了解决方案，预计在2.13.0版本会解决这个问题。参考Github上issue#17269。
+
+参考文章
+No stacktrace on NavigationDuplicated error #2881
+
+[Bug Report] 升级vue-router至3.1以后版本，导航组件重复点击报错 NavigationDuplicated #17044
+
+Menu: fix router NavigationDuplicated error when using vue-router@^3.1.0 #17269
 
 
 
 # VueRouter_动态路由匹配
-> `当我们需要把某种模式匹配到的所有路由，全都映射到同一个组件`。例如，我们有一个 User 组件，对于所有 ID 各不相同的用户，都要使用这个组件来渲染。那么，我们可以在 vue-router 的路由路径中使用“动态路径参数”来达到这个效果：
+> `当我们需要把某种模式匹配到的所有路由，全都映射到同一个组件`。例如，我们有一个 User 组件，对于所有 ID 各不相同的用户，都要使用这个组件来渲染。那么，我们可以在vue-router的路由路径中`使用“动态路径参数”`来达到这个效果：
 
 ```js
 const User = {
@@ -6604,7 +6650,22 @@ const router = new VueRouter({
 
 `一个“路径参数”使用冒号 : 标记。当匹配到一个路由时，参数值会被设置到 this.$route.params，可以在每个组件内使用。`
 
+```html
+<ul v-if="questionList && questionList.length">
+  <router-link
+    tag="li"
+    :to="{ name: 'question', params: { id: question.id } }"
+    v-for="question in questionList"
+    :key="question.id"
+  >
+    {{ question.title }}
+  </router-link>
+</ul>
+```
 
+动态路径id变了，但是数据还没刷新没变，因为使用的是共用的一个父组件question，而vue实例生命周期只有一次，所以组件不会刷新，怎么办呢？
+
+**方法一：watch**,当'$route'变化时,重新getData()即可
 
 
 
