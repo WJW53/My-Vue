@@ -6672,9 +6672,9 @@ const router = new VueRouter({
 # VueRouter_命名视图-路由组件传参
 
 ## 命名视图
-> 想同时展示多个视图时，并且每个视图展示不同的组件时，可以使用命名视图。
+> **想同时展示多个视图时，并且每个视图展示不同的组件时，可以使用命名视图。**
 
-可以在界面中拥有多个单独命名的视图，而不是只有一个单独的出口。如果 router-view 没有设置名字，那么默认为 default。
+**可以在界面中拥有多个单独命名的视图，而不是只有一个单独的出口。如果 router-view 没有设置名字，那么默认为 default。**
 
 ```html
 <router-view class="view one"></router-view>
@@ -6700,15 +6700,15 @@ const router = new VueRouter({
 ```
 
 ## 路由组件传参
-在组件中使用 $route 会使之与其对应路由形成高度耦合，从而使组件只能在某些特定的 URL 上使用，限制了其灵活性。
+在组件中使用 $route 会使之与其对应路由形成高度耦合，从而使组件只能在某些特定的 URL 上使用，限制了其灵活性。**也就是在其他页面级组件中我不能使用你的动态路由了，因为现在params是我当前的route信息，给不了你你想要的动态id**。
 
 `在动态路由的route配置中使用 props 将组件和路由解耦, 配合组件内添加props特性。`
 
 ### 布尔模式
-`如果props被设置为true, route.params中的属性将会被设置为组件属性传递过来,即可以通过this拿到;这个常用`
+**如果props被设置为true,`route.params中的属性将会被设置为组件属性传递过来`,即可以通过this拿到;这个常用**
 
 ### 对象模式
-如果 props 是一个对象，它会被按原样设置为组件属性。不常用，当 props 是静态的时候有用。
+如果 props 是一个对象，它会被按原样设置为组件属性。**不常用，因为这样 props 是静态的**。
 ```js
 const router = new VueRouter({
   routes: [
@@ -6722,6 +6722,9 @@ const router = new VueRouter({
 ```
 
 ### 函数模式
+
+`如果我们传递的参数，还是需要依赖$route的值`，那就用函数模式：
+
 **你可以创建一个函数返回 props。函数的第一个参数是 route （即$route）,这样就可以从this上拿到route上的所有信息了**
 ```js
 const router = new VueRouter({
@@ -6746,17 +6749,17 @@ const router = new VueRouter({
 # 路由的进阶知识开始了
 
 # VueRouter_导航守卫
-导航：路由正在发生变化。
+导航：路由`正在`发生变化。
 
 导航守卫主要用来通过跳转或取消的方式守卫导航。
 
 导航守卫被分成三种：全局的、单个路由独享的、组件内的。
 
 ## 全局守卫
-是指路由实例上直接操作的钩子函数，触发路由就会触发这些钩子函数。
+是指**路由实例上直接操作的钩子函数，触发路由就会触发这些钩子函数**。
 
 ### 全局前置守卫 beforeEach
-在路由跳转前触发，一般被用于登录验证。
+**在路由跳转前且所有组件内守卫和异步路由组件被解析之前触发**，`一般被用于登录验证`。
 
 ```js
 const router = new VueRouter({ ... })
@@ -6770,15 +6773,15 @@ router.beforeEach((to, from, next) => {
 - to 目标路由对象
 - from 即将要离开的路由对象
 - next 三个参数中最重要的参数。
-  - 必须调用next()，才能继续往下执行一个钩子，否则路由跳转会停止
+  - **`必须调用next()，才能继续往下执行一个钩子，否则路由跳转会停止`**
   - 若要中断当前的导航，可以调用next(false)。
-  - 可以使用next跳转到一个不同的地址。终端当前导航，进入一个新的导航。next参数值和$routet.push一致。
-  - next(error)。2.4+，如果传入的参数是一个Error实例，则导航会被终止，且该错误会被传递给router.onError() 注册过的回调。
+  - 可以使用next跳转到一个不同的地址。中断当前导航，进入一个新的导航。next参数值和$routet.push一致。
+  - next(error)。2.4+，如果传入的参数是一个Error实例，则导航会被终止，**且该错误会被传递给router.onError() 注册过的回调。**
 
 ### 全局解析守卫 beforeResolve
 和boforeEach类似，路由跳转前触发。
 
-和beforeEach的区别：在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被调用。
+和beforeEach的区别：**在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后**，解析守卫就被调用。
 
 ```js
 const router = new VueRouter({ ... })
@@ -6788,8 +6791,9 @@ router.beforeResolve((to, from, next) => {
 })
 ```
 
-### 全局后置钩子 afterEach
-和beforeEach相反，路由跳转完成后触发。
+### 全局后置守卫 afterEach
+
+和beforeEach相反，**路由跳转完成后触发**，所以它没有next参数，跳都跳完了。
 ```js
 const router = new VueRouter({ ... })
 
@@ -6799,10 +6803,10 @@ router.afterEach((to, from) => {
 ```
 
 ## 路由独享守卫
-是指在单个路由配置的时候也可以设置的钩子函数。
+**是指在单个路由配置的时候也可以设置的钩子函数。**
 
 ### beforeEnter
-和beforeEach完全相同，如果都设置则在beforeEach之后紧随执行。
+- 和beforeEach完全相同，如果都设置则在beforeEach之后紧随执行。
 
 ```js
 const router = new VueRouter({
@@ -6815,18 +6819,21 @@ const router = new VueRouter({
       }
     }
   ]
-})
+});
 ```
 
 ## 组件内守卫
-是指在组件内执行的钩子函数，类似于组件内的生命周期，相当于为配置路由的组件添加的生命周期钩子函数。
+**是指在页面级组件内执行的钩子函数，类似于组件内的生命周期，相当于为配置路由的组件(就是在router.js中component配置的路由组件)添加的生命周期钩子函数。别的组件使用了这个页面级组件，则也会触发这个组件内守卫**
+
+比如我写了学员展示的组件内守卫，而课程学习组件也用到了学员展示组件，所以这俩页面级组件都会触发那个守卫
 
 ### beforeRouteEnter
-路由进入之前调用。
+路由进入之前调用。在beforeEach之后，beforeResolve之前
 
-在该守卫内访问不到组件的实例，this值为undefined。在这个钩子函数中，可以通过传一个回调给 next来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数，可以在这个守卫中请求服务端获取数据，当成功获取并能进入路由时，调用next并在回调中通过 vm访问组件实例进行赋值等操作，（next中函数的调用在mounted之后：为了确保能对组件实例的完整访问）。
+`在该守卫内访问不到组件的实例，this值为undefined(因为这时组件还没被加载渲染呢)`。在这个钩子函数中，可以通过传一个回调给 next 来访问组件实例。**在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数**，可以在这个守卫中请求服务端获取数据，当成功获取并能进入路由时，调用next并在回调中通过 vm 访问组件实例进行赋值等操作，**（next中函数的调用在mounted之后：为了确保能对组件实例的完整访问）**。
 
 ```js
+//假设在Student.vue中写
 beforeRouteEnter (to, from, next) {
     // 在渲染该组件的对应路由被 confirm 前调用
     // 不！能！获取组件实例 `this`
@@ -6835,11 +6842,11 @@ beforeRouteEnter (to, from, next) {
     next( vm => {
     // 通过 `vm` 访问组件实例
   })
-  },
+},
 ```
 
 ### beforeRouteUpdate
-在当前路由改变时，并且该组件被复用时调用，可以通过this访问实例。
+**在当前路由改变时，并且该组件被复用时调用，可以通过this访问实例**。
 
 何时组件会被复用？
 - 动态路由间互相跳转
@@ -6858,15 +6865,15 @@ beforeRouteUpdate (to, from, next) {
 导航离开该组件的对应路由时调用，可以访问组件实例this。
 
 ```js
-beforeRouteLeave (to, from, next) {
+beforeRouteLeave (to, from, next) {//注意哦,有next参数
   // 导航离开该组件的对应路由时调用
   // 可以访问组件实例 `this`
 }
 ```
 
-## 完整的导航解析流程
+## 完整的导航解析流程(记住!!)
 1. 导航被触发。
-2. 在失活的组件里调用离开守卫。
+2. 在失活的组件里调用 离开守卫beforeRouteLeave。
 3. 调用全局的 beforeEach 守卫。
 4. 在重用的组件里调用 beforeRouteUpdate 守卫 (2.2+)。
 5. 在路由配置里调用 beforeEnter。
@@ -6882,9 +6889,11 @@ beforeRouteLeave (to, from, next) {
 
 
 # VueRouter_路由元信息
-定义路由的时候可以配置 meta 字段，用于自定义一些信息。
+定义路由的时候可以配置 meta 字段，**用于自定义一些信息**。
 
-常用于验证是否需要登录路由才能访问
+`常用于验证需要登录路由才能访问,判断函数可以放在全局守卫上判断`
+- 注意：应该要验证每个祖先路径requiresLogin是否为true，不然可能因为一些重定向啥的，出现问题
+  - 利用to.matched.some(item => item.meta.requiresLogin === true);一真则真,全假才假
 
 ```js
 const router = new VueRouter({
@@ -6896,7 +6905,7 @@ const router = new VueRouter({
         {
           path: 'bar',
           component: Bar,
-          meta: { requiresLogin: true }
+          meta: { requiresLogin: true }//配置meta字段
         }
       ]
     }
@@ -6904,6 +6913,26 @@ const router = new VueRouter({
 })
 ```
 
+新写一个Login组件，配合登录模块的js文件utils下的auth.js
+```js
+router.beforeEach((to, from, next) => {
+  // console.log(to.meta.requiresLogin);
+
+  //先验证祖先路径的meta
+  const isRequiresLogin = to.matched.some(item => item.meta.requiresLogin === true);
+  if (isRequiresLogin) {
+    const isLogin = auth.isLogin();//cookie是key=value的形式
+    if (isLogin) {
+      next();//已经登陆过
+    } else {
+      const isToLogin = window.confirm("登录后才可以浏览，需要登录吗？");
+      isToLogin ? next("/login") : next(false);
+    }
+  } else {
+    next();
+  }
+});
+```
 
 
 
@@ -6930,7 +6959,7 @@ const router = new VueRouter({
 ```js
 const router = new VueRouter({
   routes: [...],
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior (to, from, savedPosition) {//savedPostion也是返回一个对象{x:..,y..}
     // return {x:0,y:0}//期望滚动到哪个的位置
   }
 })
@@ -6943,7 +6972,7 @@ scrollBehavior 返回滚动位置的对象信息，长这样：
 - { x: number, y: number }
 - { selector: string, offset? : { x: number, y: number }} (offset 只在 2.6.0+ 支持)
 
-selector是锚点选择器,跳到对应锚点
+**selector是锚点选择器,跳到对应锚点**
 
 ```js
 scrollBehavior (to, from, savedPosition) {
@@ -6951,7 +6980,6 @@ scrollBehavior (to, from, savedPosition) {
   return { x: 0, y: 0 }
 }
 ```
-
 ```js
 scrollBehavior (to, from, savedPosition) {
   if (to.hash) {
@@ -6962,12 +6990,29 @@ scrollBehavior (to, from, savedPosition) {
 }
 ```
 
+```js
+scrollBehavior(to, from, savedPosition) {
+    // console.log(savedPosition);
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      if (to.hash) {
+        return { selector: to.hash }
+      } else {
+        return { x: 0, y: 0 };
+      }
+    }
+}
+```
+
 - 若只是想个别页面回到顶部,那就在路由元信息上加个属性,然后判断下
 
 
 
 
+# Vuex
 
+- 浏览器的Vue Devtools插件可以在控制台看到Vue、Vuex
 
 # Vuex_State
 `实现组件间的通信`：Vuex是vue的状态管理工具，为了更方便的实现多个组件共享状态。
@@ -7042,7 +7087,7 @@ computed: {
 
 ```
 
-## @相当于src,便于import
+## @相当于src的绝对路径,便于import
 
 
 

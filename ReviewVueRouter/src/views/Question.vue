@@ -20,6 +20,24 @@
 
 <script>
 export default {
+  beforeRouteUpdate(to, from, next) {
+    // console.log("beforeRouteUpdate");
+    // console.log(this);
+    next();
+  },
+  // beforeRouteLeave(to, from, next) {
+  //   const isLeave = window.confirm("真的要走吗，不再看看了？");
+  //   isLeave ? next() : next(false);
+  // },
+  props: {
+    id: {
+      type: [String, Number],
+    },
+    name: {
+      type: String,
+      default: "question",
+    },
+  },
   data() {
     return {
       question: null,
@@ -28,6 +46,8 @@ export default {
   mounted() {
     // console.log(this.$route.params);
     // this.getData();
+    // console.log(this.id);
+    // console.log(this.name);
   },
   computed: {
     otherQuestionList() {
@@ -54,7 +74,8 @@ export default {
   },
   methods: {
     handleClick(id) {
-      const { name } = this.$route; //如果我们不知道name是多少的话
+      // const { name } = this.$route; //如果我们不知道name是多少的话
+      const { name } = this;
       this.$router.push({
         // name: "question",
         name,
@@ -65,7 +86,10 @@ export default {
     },
     getData() {
       //所以把这个获取数据封装成一个函数,当侦听器变化时,重新获取数据即可
-      const { id } = this.$route.params;
+      // const { id } = this.$route.params;
+
+      const { id } = this; //解耦,不用你从$route中给我了,我利用props了
+      // console.log(typeof id, id);
       this.$axios.get(`/question/${id}`).then((res) => {
         this.question = res;
       });
