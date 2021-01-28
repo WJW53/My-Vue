@@ -489,6 +489,73 @@ Vue.nextTick().then(() => {
 - 问题解决了，但是为什么会这样呢？
   > Object.defineProperty的锅，咱们下节课说~
 
+## 关于响应式属性
+1. Vue 不允许动态添加根级响应式属性
+```js
+const app = new Vue({
+  data: {
+    a: 1
+  }
+  // render: h => h(Suduko)
+}).$mount('#app1')
+
+Vue.set(app.data, 'b', 2)
+
+```
+2. 只可以使用 Vue.set(object, propertyName, value) 方法向嵌套对象添加响应式属性
+```js
+var vm=new Vue({
+    el:'#test',
+    data:{
+        //data中已经存在info根属性
+        info:{
+            name:'小明';
+        }
+    }
+});
+//给info添加一个性别属性
+Vue.set(vm.info,'sex','男');
+```
+## set原理
+```js
+function set (target: Array<any> | Object, key: any, val: any): any {
+  if (process.env.NODE_ENV !== 'production' &&
+    (isUndef(target) || isPrimitive(target))
+  ) {
+    warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
+  }
+  if (Array.isArray(target) && isValidArrayIndex(key)) {
+    target.length = Math.max(target.length, key)
+    target.splice(key, 1, val)
+    return val
+  }
+  if (key in target && !(key in Object.prototype)) {
+    target[key] = val
+    return val
+  }
+  const ob = (target: any).__ob__
+  if (target._isVue || (ob && ob.vmCount)) {
+    process.env.NODE_ENV !== 'production' && warn(
+      'Avoid adding reactive properties to a Vue instance or its root $data ' +
+      'at runtime - declare it upfront in the data option.'
+    )
+    return val
+  }
+  if (!ob) {
+    target[key] = val
+    return val
+  }
+  defineReactive(ob.value, key, val)
+  ob.dep.notify()
+  return val
+}
+```
+
+
+## Vue.set()和this.$set()
+
+> Vue.set()和this.$set()这两个api的实现原理基本一模一样，都是使用了set函数。set函数是从 ../observer/index 文件中导出的，区别在于Vue.set()是将set函数绑定在Vue构造函数上，this.$set()是将set函数绑定在Vue原型上。
+
 
 # 扩展_剖析Vue响应式原理
 
@@ -7012,6 +7079,7 @@ scrollBehavior(to, from, savedPosition) {
 
 # Vuex
 
+## Vuex中Storethis不是指向vue实例!!
 - 浏览器的Vue Devtools插件可以在控制台看到Vue、Vuex
 
 # Vuex_State
@@ -7092,11 +7160,10 @@ computed: {
 
 
 
-
 # Vuex_Getter
 它是store的计算属性。`getter的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。`
 
-Getter 接收state作为其第一个参数、getters作为其第二个参数。
+Getter 接收 state 作为其第一个参数、getters作为其第二个参数。
 
 ```js
 getters: {
@@ -7111,7 +7178,7 @@ getters: {
 Getter会暴露为store.getters对象：``this.$store.getters.doubleCount``
 
 ## 通过方法访问
-`也可以让对应的getter返回一个函数，来实现给getter传参，但此时没有依赖缓存`
+`也可以让对应的getter返回一个函数，来实现给getter传参，但此时没有依赖缓存，因为返回的是函数呀`
 ```js
 getters: {
   // addCount: state => num => state.count + num;//这个num就是那个参数
@@ -7161,11 +7228,10 @@ mapGetters({
 
 
 # Vuex_Mutation
-**更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。**
+**更改 Vuex(严格模式下) 的 store 中的状态的唯一方法是提交 mutation。**
 
 ## 严格模式
 开启严格模式，仅需在创建 store 的时候传入 strict: true：
-
 ```js
 const store = new Vuex.Store({
   // ...
@@ -7234,7 +7300,7 @@ export default {
 - 最好还是使用commit,不要直接用this.increment(),因为这样不易分清它是不是普通方法
 
 ## 提交载荷（Payload）
-你可以向store.commit传入额外的参数，即mutation的载荷（payload）：
+**你可以向store.commit传入额外的参数，即mutation的载荷（payload）：**
 ```js
 mutations: {
   increment (state, n) {
@@ -7271,7 +7337,7 @@ store.commit({
 当使用对象风格的提交方式，整个对象都作为载荷传给 mutation 函数，因此 handler 保持不变：
 ```js
 mutations: {
-  increment (state, payload) {
+  increment (state, payload) {//这里的两个参数不用变
     state.count += payload.amount
   }
 }
@@ -7279,12 +7345,14 @@ mutations: {
 
 ## 使用常量替代 Mutation 事件类型
 把这些常量放在单独的文件中可以让你的代码和作者对整个 app 包含的 mutation 一目了然：
+
+先在src下创建一个store文件夹
 ```js
 // mutation-types.js
 export const COUNT_INCREMENT = 'COUNT_INCREMENT'
 ```
 ```js
-// store.js
+// store.js/index.js
 import Vuex from 'vuex'
 import { COUNT_INCREMENT } from './mutation-types'
 
@@ -7304,8 +7372,8 @@ const store = new Vuex.Store({
 
 - 最好提前在你的 store 中初始化好所有所需属性。
 - 当需要在对象上添加新属性时(需要重新渲染页面得用set/...)，你应该
-  - 使用 Vue.set(obj, 'newProp', 123), 或者
-  - 以新对象替换老对象。例如，利用对象展开运算符我们可以这样写：
+  - 使用 `Vue.set(obj, 'newProp', 123)`, 或者
+  - `以新对象替换老对象`。例如，利用对象展开运算符我们可以这样写：
     ```js
     state.obj = { ...state.obj, newProp: 123 }
     ```
@@ -7315,15 +7383,16 @@ const store = new Vuex.Store({
 
 ## 更改计算属性的时候需要用Vue.set();
 
-如果想要使用双向数据的功能，就需要自己模拟一个v-model: :value="msg" @input="updateMsg"。
+如果想要使用双向数据的功能，就需要自己模拟一个v-model:，:value="msg" @input="updateMsg"。
 
 ### 双向绑定的计算属性
 `上面的做法，比v-model本身繁琐很多，所以我们还可以使用计算属性的setter来实现双向绑定：`
 ```html
-<input v-model="msg">
+<!-- 重写v-model -->
+<input v-model="msg" /> {{ msg }}
 ```
-
 ```js
+//Home.vue
 computed: {
   msg: {
     get () {
@@ -7337,8 +7406,7 @@ computed: {
 ```
 
 ## Mutation 必须是同步函数
-要记住 **mutation 必须是同步函数**。why？
-
+要记住 **mutation 必须是同步函数，否则报警告错误**。why？
 ```js
 mutations: {
   [COUNT_INCREMENT] (state) {
@@ -7348,9 +7416,7 @@ mutations: {
   },
 }
 ```
-
 执行上端代码，我们会发现更改state的操作是在回调函数中执行的，这样会让我们的代码在devtools中变的不好调试：当 mutation 触发的时候，回调函数还没有被调用，devtools 不知道什么时候回调函数实际上被调用，`任何在回调函数中进行的状态的改变都是不可追踪的`。
-
 
 
 
@@ -7358,10 +7424,10 @@ mutations: {
 # Vuex_Action
 Action 类似于 mutation，不同在于：
 
-- Action 提交的是 mutation，而不是直接变更状态。
-- `Action 可以包含任意异步操作`
+- **Action 提交的是 mutation，而不是直接变更状态**。
+- **`Action 可以包含任意异步操作`**
 
-Action 函数接收一个与 store 实例具有相同方法和属性的 context 对象，因此你可以调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters:
+**`Action 函数接收一个与 store 实例具有相同方法和属性的 context 对象`，因此你可以调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters**
 
 ```js
 const store = new Vuex.Store({
@@ -7381,7 +7447,7 @@ const store = new Vuex.Store({
 })
 ```
 
-## 分发Action
+## 调用/分发Action
 ```js
 store.dispatch('increment')
 ```
@@ -7407,6 +7473,7 @@ actions: {
 
 ## 组合 Action
 Action 通常是异步的，那么如何知道 action 什么时候结束呢？
+- 返回一个Promise即可
 ```js
 actions: {
   actionA ({ commit }) {
@@ -7426,15 +7493,25 @@ store.dispatch('actionA').then(() => {
 ```
 
 ## Vuex 管理模式
-![](https://vuex.vuejs.org/vuex.png)
+![Vuex管理模式](https://vuex.vuejs.org/vuex.png)
 
 
 
 
 # Vuex_Module
-> 由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿。
+> 由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。**当应用变得非常复杂时，store 对象就有可能变得相当臃肿**。
 
-为了解决以上问题，`Vuex 允许我们将 store 分割成模块（module）`。在store文件夹下新建一个modules文件夹。每个模块拥有自己的 state、mutation、actions、getters。
+为了解决以上问题，`Vuex 允许我们将 store 分割成模块（module）`。在store文件夹下新建一个modules文件夹。每个模块拥有自己的 state、mutations、actions、getters，模块前面不需要再引入Vue和Vuex文件模块了，直接导出{}。
+```js
+export default {
+  state:{
+
+  },
+  mutations:{
+
+  },
+}
+```
 
 ```js
 //在store下的index.js的导出对象里多加个modules属性
@@ -7444,7 +7521,7 @@ modules: {
 }
 ```
 
-- `获取 state：this.\$store.state.moduleName.xxx`,`只有state里面的属性变成了一个个对象,比较独特`
+- **特别注意**：当引入了那些模块之后,`获取state要先.模块名：this.\$store.state.moduleName.xxx`,moduleName这个属性是一个对象,就代表着那个模块,`而且只有state才需要在前面加上模块名,getters/mutations/actions里都不需要`
 
 - 获取 getter：this.\$store.getters.xxx
 - 提交 mutation：this.\$store.commit('xxx');
@@ -7454,13 +7531,12 @@ modules: {
 
 
 ## 命名空间
-可以通过添加 `namespaced: true` 的方式使其成为带命名空间的模块。
+可以通过在对应模块中添加 `namespaced: true` 的方式使其成为带命名空间的模块。
 
-**`注意：成为命名空间后这四个属性/方法，全都有自己的模块了，就不单单是只有state了`**
+**`注意：成为命名空间后这四个属性/方法，全都有自己的模块了，就不单单是只有state了，就都要加模块名调用数据/属性/方法了`**
 
 - 获取 state：this.\$store.state.moduleName.xxx
-- 获取 getter：this.\$store.['moduleName/getters'].xxx
-  - `? 上面getter这条好像错了,应该这么写吧:  this.\$store.getters['moduleName/xxx']`
+- 获取 getter：this.\$store.getters['moduleName/xxx']
 - 提交 mutation：this.\$store.commit('moduleName/xxx');
 - 分发 action：this.\$store.dispatch('moduleName/xxx');
 
@@ -7472,17 +7548,12 @@ modules: {
 
 2. 同样，对于模块内部的 action，`局部状态通过 context.state 暴露出来`，`根节点状态则为 context.rootState`。
 
-3. 对于模块内部的 getter，`根节点状态会作为第三个参数暴露出来`。
+3. 对于模块内部的 getters，第一个参数是state,第二个参数是getters(当前模块下的所有getter函数),`根节点状态会作为第三个参数暴露出来`。
 
 ```js
 getters: {
-  countDouble: (state,getters,rootState) => {//第二个参数是getters?
-    console.log(rootState);
+  countDouble: (state,getters,rootState) => {
     return state.count * 2;
   }
 }
 ```
-
-
-
-
