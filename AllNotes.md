@@ -7076,6 +7076,75 @@ scrollBehavior(to, from, savedPosition) {
 
 
 
+# 扩展_VueRouter_路由原理实现
+
+## 第一步
+```html
+<span onclick="routerChange('/about')"></span>
+<a href="/"></a>
+<div id="view"></div>
+```
+```js
+//hash模式下,路由实现原理,监听浏览器的hashchange事件
+document.addEventListener("DOMContentLoaded",()=>{
+  view.innerHTML = location.hash.slice(1);
+});
+window.addEventListener("hashchange",()=>{
+  view.innerHTML = location.hash.slice(1);
+});
+//如果标签不是a标签的话
+function routerChange(pathname){
+  location.hash=pathname;
+}
+```
+
+
+```js
+//history模式,它是用HTML5的API,pushState实现的
+function routerChange(pathname){
+  history.pushState(null,null,pathname);
+  view.innerHTML = location.pathname;
+}
+window.addEventListener("popstate",()=>{//前进回退按钮
+  view.innerHTML = location.pathname
+});
+```
+hash模式的特点：url会更改、浏览器可以前进后退、但浏览器不会刷新、最重要的是不会将这个请求发送到后台(也就是不和服务端交流,因为只是改个锚点而已)
+history模式的特点：无锚点,无hash,需要服务端的配合
+
+## 第二步
+一、在src下新建一个vue-router文件夹,在它下面创建index.js,写一个类class VueRouter{}再导出
+二、在VueRouter中写一个install方法(它的参数就是Vue,是Vue传给它的),这样才能通过Vue.use()构建起路由和Vue之间的桥梁
+```js
+class VueRouter{};
+VueRouter.install = Vue => {};
+```
+三、利用上面这个参数Vue,创建router-link和router-view组件
+```js
+Vue.component('router-link',{
+  render(h){
+    // return h('a','router-link');
+    return h(this.tag,this.$slots.default);
+  }
+});
+```
+四、利用defineProperty给Vue.prototype定义$router和$route属性
+```js
+Object.defineProperty(Vue.protorype,'$router',{
+  get(){return {}};
+});
+```
+五、再在vue-router文件夹下创建个install.js、history.js、components文件夹(里面包含link.js和view.js),然后该抽离的抽离,开始写代码了
+
+## 第三步
+
+一个细节：defineReactive一旦它盯上的属性变化(前提是定义了这个属性)了,视图就会重新渲染/render
+
+
+
+
+
+
 
 # Vuex
 

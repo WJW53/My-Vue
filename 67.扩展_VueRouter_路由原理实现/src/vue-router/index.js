@@ -2,7 +2,7 @@ import install from './install';
 import History from './history';
 
 class VueRouter {
-  constructor (options) {
+  constructor (options) {//这个options就是为了拿到router.js中配置的routes路由表
     this.routeMap = this.createRouteMap(options.routes || []);
     this.history = new History();
     this.mode = options.mode || 'hash';
@@ -31,7 +31,7 @@ class VueRouter {
       window.addEventListener('hashchange', () => {
         this.history.current.path = location.hash.slice(1);
       })
-    } else {
+    } else {//history
       document.addEventListener('DOMContentLoaded', () => {
         this.history.current.path = location.pathname;
       })
