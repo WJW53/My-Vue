@@ -24,9 +24,10 @@ export default class ModuleCollection {
     } else {
       // 非 根路径
       // 1. 获取到父模块
-      const parent = this.get(path.slice(0, -1))
+      const parent = this.get(path.slice(0, -1));//负数就是从尾部开始的元素
       // 2. 获取到当前模块的名字
       const moduleName = path[path.length - 1];
+      // 3. 将当前模块放到父模块的子模块中
       parent._children[moduleName] = newModule;
     }
 
@@ -34,7 +35,7 @@ export default class ModuleCollection {
     if(rawModule.modules) {
       const modules = rawModule.modules;  // 拿到子模块
       forEachValue(modules, (rawChildModule, moduleName) => {
-        this.register(path.concat(moduleName), rawChildModule);
+        this.register(path.concat(moduleName), rawChildModule);//用了concat可以返回新数组,这样就不会影响path了
       })
 
     }
@@ -49,8 +50,8 @@ export default class ModuleCollection {
 
     return path.reduce((module, key) => {
       // 向父模块去添加子模块
-      return module.getChild(key)
-    }, this.root)
+      return module.getChild(key);
+    }, this.root);
   }
   
 }

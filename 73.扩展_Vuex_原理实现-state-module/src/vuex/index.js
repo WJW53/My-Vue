@@ -20,7 +20,7 @@ class Store {
         state: options.state || {},
       }
     })
-
+    //让state和vue产生关系
     this.state = this._vm.state;
 
     this._modules = new ModuleCollection(options);
@@ -40,11 +40,11 @@ function getNestedState (rootState, path) {
 
 function installModule (store, rootState, path, module) {
   /**
-   * @desc 安装模块
+   * @desc 安装模块的state
    * @param { Store } store - store 实例
    * @param { Objetc } rootState - 根模块的state
-   * @param { Array } path - 路径
-   * @param { Module } module - 模块
+   * @param { Array } path - 当前路径
+   * @param { Module } module - 当前模块
    */
 
    const isRoot = path.length === 0;
@@ -54,7 +54,7 @@ function installModule (store, rootState, path, module) {
       const parentState = getNestedState(rootState, path.slice(0, -1));
       // 2. 
       const moduleName = path[path.length- 1];
-      // 3. 向父模块的satte上挂载当前子模块的state
+      // 3. 向父模块的state上挂载当前子模块的state
       parentState[moduleName] = module.state;
 
    }
@@ -72,6 +72,7 @@ export default {
   Store,
 }
 
+// 安装模块后的样子
 // this.state = {
 //   state: {
 //     count: 0,
@@ -84,6 +85,8 @@ export default {
 //   }
 // }
 
+
+// 每个模块的样子
 // this.modules = {
 //   root: {
 //     state: { count: 0},

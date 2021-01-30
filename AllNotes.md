@@ -7138,6 +7138,8 @@ Object.defineProperty(Vue.protorype,'$router',{
 
 ## 第三步
 
+先弄明白人家有什么功能，怎么使用的，顺序是啥，捋清楚，然后一点点实现
+
 一个细节：defineReactive一旦它盯上的属性变化(前提是定义了这个属性)了,视图就会重新渲染/render
 
 
@@ -7626,3 +7628,47 @@ getters: {
   }
 }
 ```
+
+
+
+# 扩展_Vuex_原理实现-state-modules
+
+从第59节拉出的干净的分支来这儿写,router原理也是从59那儿拉出来的
+
+- 注意：得搞定嵌套的module
+```js
+this.modules = {
+  root: {
+    state: { count: 0},
+    _rawModule: rootModule,
+    _children: {
+      student: {
+        state: { num: 100 },
+        _rawModule: studentModule,
+        _children: {
+          a: {
+            state: { name: 'a'},
+            _rawModule: aModule,
+            _children: {}
+          }
+        }
+      }
+    }
+  }
+}
+```
+```js
+this.state = {
+  state: {
+    count: 0,
+    student: {
+      num: 100,
+      a: {
+        name: 'a'
+      }
+    }
+  }
+}
+```
+
+**先注册、收集module然后再把每个module中的state安装到根state中**
