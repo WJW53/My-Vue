@@ -212,7 +212,7 @@ function getModuleByNamespace (store, helper, namespace) {
   const module = store._modulesNamespaceMap[namespace];
 
   if(!module) {
-    console.error(`[vuex] module namespace nout found in ${helper}(): ${namespace}`);
+    console.error(`[vuex] module namespace not found in ${helper}(): ${namespace}`);
   }
 
   return module;

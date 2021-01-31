@@ -48,8 +48,8 @@ export class Store {
     this._actions = {};
 
     const store = this;
-    const { commit, dispatch } = this;
-    this.commit = function (type, payload) {
+    const { commit, dispatch } = this;//为了更改this指向,先保留下来
+    this.commit = function (type, payload) {//再重新赋值,并且改变执行时的this指向store
       return commit.call(store, type, payload);
     }
     this.dispatch = function (type, payload) {

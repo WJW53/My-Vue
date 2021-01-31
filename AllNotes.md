@@ -7671,4 +7671,14 @@ this.state = {
 }
 ```
 
-**先注册、收集module然后再把每个module中的state安装到根state中**
+- **先注册、收集module然后再把每个module中的state安装到根state中**
+
+一定要把module原理搞清楚，可以说它是起决定性作用的，影响了Vuex其他的api
+
+getters的原理直接把我整懵逼了，因为Vuex每个API的原理都是一个接着上一个实现基础的，所以但凡有一个没整明白，尤其是modulus，其他的再看只会越来越懵逼
+
+工作一段时间以后再来看看吧，我佛了。。
+
+**$watch有个配置是`sync:true`就是开启同步侦听**
+
+`makeLocalContext`不是本地的意思,指的是创建当前模块的上下文

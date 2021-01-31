@@ -3,7 +3,7 @@ import ModuleCollection from './module/module-collection';
 import { forEachValue } from './util';
 
 /**
- * 1. 将各个模块上的getters都统一的放到store上，无论是root上的还是其他子模块上
+ * 1. 扁平化: 将各个模块上的getters都统一的放到store上，无论是root上的还是其他子模块上
  *   this._wrappedGetters = {
  *     countDouble (state) { return state.count * 2},
  *     numDouble (state) { return state.num * 2}
@@ -101,7 +101,8 @@ function registerGetter (store, type, getter, local) {
    * @param { Function } getter - getter 函数
    * @param { Object } local - 本地数据
    */
-  store._wrappedGetters[type] = function (store) {
+  store._wrappedGetters[type] = function (store) {//如果直接等于getter那就拿不到这个store参数了
+    //所以拿一个匿名函数包裹起来,再传递这个store
     return getter(local.state, local.getters, store.state, store.getters);
   };
 };
@@ -123,7 +124,8 @@ function resetStoreVM (store, state) {
   forEachValue(wrappedGetters, (getterFn, getterName) => {
     computed[getterName] = function () { return getterFn(store) }
     Object.defineProperty(store.getters, getterName, {
-      get () {
+      get () {//必须这样用,只有这样才能拿到store._vm,本文中好几处都是利用defineProperty
+        //的get存取器符号来解决这个问题的:只有当时用到这个属性的时候,才会调用这个_vm
         return store._vm[getterName];
       },
       enumerable: true,
