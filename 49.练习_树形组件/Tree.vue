@@ -1,11 +1,11 @@
 <template>
   <ul class="tree">
-    <li 
+    <li
       v-for="(node, index) in data"
       :key="node[defaultProps.label]"
       class="tree-node"
     >
-      <i 
+      <i
         v-if="node[defaultProps.children]"
         class="iconfont"
         :class="{
@@ -13,12 +13,11 @@
           'icon-right': showChildren[index],
         }"
       />
-      <span 
-        class="node-label"
-        @click="handleClick(index)"
-      >{{ node[defaultProps.label] }}</span>
+      <span class="node-label" @click="handleClick(index)">{{
+        node[defaultProps.label]
+      }}</span>
       <keep-alive>
-        <base-tree 
+        <base-tree
           v-if="showChildren[index] && node[defaultProps.children]"
           :data="node[defaultProps.children]"
         />
@@ -29,32 +28,32 @@
 
 <script>
 export default {
-  name: 'base-tree',
+  name: "base-tree",
   props: {
     data: {
       type: Array,
       required: true,
     },
-    defaultProps: {
+    defaultProps: {//保证没有传入的时候,这些就是默认值
       type: Object,
       default: () => ({
-        label: 'label',
-        children: 'children',
-      })
+        label: "label",
+        children: "children",
+      }),
     },
   },
-  data () {
+  data() {
     return {
       showChildren: [],
-    }
+    };
   },
   methods: {
-    handleClick (index) {
+    handleClick(index) {
       const flag = !this.showChildren[index];
       this.$set(this.showChildren, index, flag);
     },
   },
-}
+};
 </script>
 
 <style scoped>
